@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Add Course{% endblock %}
+
+{% block body %}
+    <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ccc; border-radius: 8px; background-color: #fafafa;">
+        <h2 style="text-align: center; margin-bottom: 30px;">➕ Add New Course</h2>
+
+        {{ form_start(form) }}
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+                <label for="course_name" style="margin-bottom: 5px; font-weight: bold;">Course Name</label>
+                {{ form_widget(form.Name, {'attr': {'id': 'course_name', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+            </div>
+
+            <div>
+                <label for="course_description" style="margin-bottom: 5px; font-weight: bold;">Course Description</label>
+                {{ form_widget(form.Description, {'attr': {'id': 'course_description', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <button type="submit" style="padding: 8px 16px; background-color: black; color: white; border: none; border-radius: 4px;">
+                Add Course
+            </button>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

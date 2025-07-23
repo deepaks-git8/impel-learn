@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Dashboard{% endblock %}
+
+{% block body %}
+    <div style="max-width: 1000px; margin: auto; padding: 20px;">
+        <h1 style="margin-bottom: 30px;">🎓 Welcome, {{ app.user.email }}</h1>
+
+        <h2>My Enrolled Courses</h2>
+
+        {% if enrollments is empty %}
+            <div style="margin-top: 20px; color: gray;">
+                You haven’t enrolled in any courses yet. Go to the
+                <a href="{{ path('app_course_view') }}">Course Catalog</a> to explore.
+            </div>
+        {% else %}
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                {% for enrollment in enrollments %}
+                    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #f9f9f9;">
+                        <h3>{{ enrollment.course.name }}</h3>
+
+                        {# Future fields like: enrollment.enrolledAt | date('d M Y') #}
+
+                        <a href="{{ path('app_course_content', { id: enrollment.course.id }) }}" style="display: inline-block; margin-top: 10px; color: #0056b3;">
+                            🔍 View Course
+                        </a>
+
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

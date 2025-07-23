@@ -1,20 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello AdminController!{% endblock %}
+{% block title %}Admin Panel - Manage Courses{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <style>
+        .admin-wrapper {
+            margin: 2em auto;
+            max-width: 800px;
+            width: 95%;
+            font-family: sans-serif;
+        }
+        .admin-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .admin-card h2 {
+            margin-bottom: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            margin-right: 10px;
+        }
+        .btn-add { background-color: #28a745; }
+        .btn-edit { background-color: #007bff; }
+        .btn-delete { background-color: #dc3545; opacity: 0.5; cursor: not-allowed; }
+    </style>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="admin-wrapper">
+        <div class="admin-card">
+            <h2>📚 Course Management</h2>
+            <p>Manage your platform’s course catalog.</p>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/deepakk/AssesmentProject/ImpelLearn/src/Controller/AdminController.php'|file_link(0) }}">src/Controller/AdminController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/deepakk/AssesmentProject/ImpelLearn/templates/admin/index.html.twig'|file_link(0) }}">templates/admin/index.html.twig</a></code></li>
-    </ul>
-</div>
+            <div style="margin-top: 20px;">
+                <a href="{{ path('app_add_course') }}" class="btn btn-add">➕ Add Course</a>
+                <a  class="btn btn-edit" title="Edit functionality coming soon">✏️ Edit Course</a>
+                <a class="btn btn-delete" title="Delete functionality coming soon">🗑️ Delete Course</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
