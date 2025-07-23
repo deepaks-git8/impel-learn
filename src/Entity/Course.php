@@ -86,3 +86,4 @@ class Course
         return $this;
     }
 }
+
