@@ -58,7 +58,7 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_course_view');
         }
 
-        return $this->render('course_view/new.html.twig', [
+        return $this->render('course_view/edit.html.twig', [
             'form' => $form->createView(),
         ]);
 

@@ -6,6 +6,7 @@ use App\Form\CourseType;
 use App\Form\RegistrationFormType;
 use App\Repository\CourseRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -15,6 +16,7 @@ class CourseViewController extends AbstractController
     public function index(CourseRepository $course): Response
     {
         $courses = $course->findAll();
+
         return $this->render('course_view/index.html.twig', [
             'controller_name' => 'CourseViewController',
             'courses' => $courses
@@ -44,6 +46,10 @@ class CourseViewController extends AbstractController
             throw $this->createAccessDeniedException();
         }
         $course = $courseRepo->Find($id);
+        if(!$course){
+            return new JsonResponse(["404"=>"Invalid Course Id"]);
+        }
+
 
         return $this->render('course_view/content.html.twig', [
             'course' => $course,

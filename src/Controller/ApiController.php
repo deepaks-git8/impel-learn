@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\EnrollmentRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use App\DTO\CourseDto;
 
 class ApiController extends AbstractController
 {
@@ -43,4 +45,24 @@ class ApiController extends AbstractController
         }
         return new JsonResponse($responseInJson);
     }
+
+//    $responseInDTO = array_map(function ($course) {
+//        return new CourseDTO(
+//            $course->getId(),
+//            $course->getName()
+//        );
+//    }, $courses);
+
+    #[Route('/testing' , name:'app_test')]
+    public function testing(CourseRepository $courseRepo){
+        $courses = $courseRepo->findAll();
+        $dtoResult = array_map(function(Course $course) {
+//            return new CourseDto($c->getId(), $c->getName());
+              return new CourseDto($course );
+        }
+            , $courses);
+
+        return new JsonResponse($dtoResult);
+    }
+
 }
