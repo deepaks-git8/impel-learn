@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\UserCourseDto;
 use App\Entity\Course;
 use App\Repository\CourseRepository;
 use App\Repository\EnrollmentRepository;
@@ -63,6 +64,30 @@ class ApiController extends AbstractController
             , $courses);
 
         return new JsonResponse($dtoResult);
+    }
+
+    #[Route('/api/users-with-courses', name: 'app_users_with_courses', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function getUsersWithCourses(UserRepository $userRepo): JsonResponse
+    {
+        $users = $userRepo->findAll();
+        $response = [];
+
+        foreach ($users as $user) {
+            $response[] = new UserCourseDto($user);
+        }
+
+        return $this->json($response);
+    }
+
+    #[Route('/courses-with-users', name:'app_courses_with_users')]
+    public function getCoursesWithUsers(CourseRepository $courseRepo)
+    {
+        $courses = $courseRepo->findAll();
+
+        foreach ($courses as $course){
+            dd($course->getEnrollments(), $course->getName(), $course->getEnrollments());
+        }
     }
 
 }
