@@ -8,7 +8,29 @@
 
         <h2>My Enrolled Courses</h2>
 
-        {% set activeEnrollments = enrollments|filter(enrollment => enrollment.course.deletedAt is null) %}
+        <form method="get" action="{{ path('user_dashboard') }}" style="margin-bottom: 20px;">
+            <label for="sort">Sort By:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="">-- Select --</option>
+                <option value="name_asc" {{ app.request.get('sort') == 'name_asc' ? 'selected' : '' }}>Name (A–Z)</option>
+                <option value="name_desc" {{ app.request.get('sort') == 'name_desc' ? 'selected' : '' }}>Name (Z–A)</option>
+                <option value="recent" {{ app.request.get('sort') == 'recent' ? 'selected' : '' }}>Recently Added</option>
+                <option value="oldest" {{ app.request.get('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+            </select>
+        </form>
+
+        {% set activeEnrollments = enrollments|filter(e => e.course.deletedAt is null) %}
+        {% set sort = app.request.get('sort') %}
+
+        {% if sort == 'name_asc' %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.course.name <=> b.course.name) %}
+        {% elseif sort == 'name_desc' %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.course.name <=> a.course.name) %}
+        {% elseif sort == 'recent' %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.course.id <=> a.course.id) %}
+        {% elseif sort == 'oldest' %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.course.id <=> b.course.id) %}
+        {% endif %}
 
         {% if activeEnrollments is empty %}
             <div style="margin-top: 20px; color: gray;">

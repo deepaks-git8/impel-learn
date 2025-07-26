@@ -16,15 +16,35 @@
             </div>
         {% endif %}
 
-        {% if courses is empty %}
+        <form method="get" action="{{ path('app_course_view') }}" style="margin-bottom: 20px;">
+            <label for="sort">Sort By:</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="">-- Select --</option>
+                <option value="name_asc" {{ app.request.get('sort') == 'name_asc' ? 'selected' : '' }}>Name (A–Z)</option>
+                <option value="name_desc" {{ app.request.get('sort') == 'name_desc' ? 'selected' : '' }}>Name (Z–A)</option>
+                <option value="recent" {{ app.request.get('sort') == 'recent' ? 'selected' : '' }}>Recently Added</option>
+                <option value="oldest" {{ app.request.get('sort') == 'oldest' ? 'selected' : '' }}>Oldest First</option>
+            </select>
+        </form>
+
+        {% set filteredCourses = courses|filter(c => c.deletedAt is null) %}
+        {% set sort = app.request.get('sort') %}
+
+        {% if sort == 'name_asc' %}
+            {% set filteredCourses = filteredCourses|sort((a, b) => a.name <=> b.name) %}
+        {% elseif sort == 'name_desc' %}
+            {% set filteredCourses = filteredCourses|sort((a, b) => b.name <=> a.name) %}
+        {% elseif sort == 'recent' %}
+            {% set filteredCourses = filteredCourses|sort((a, b) => b.id <=> a.id) %}
+        {% elseif sort == 'oldest' %}
+            {% set filteredCourses = filteredCourses|sort((a, b) => a.id <=> b.id) %}
+        {% endif %}
+
+        {% if filteredCourses is empty %}
             <p>No courses available right now.</p>
         {% else %}
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-                {% for course in courses %}
-                    {% if course.deletedAt is null  %}
-                        {# show course details #}
-
-
+                {% for course in filteredCourses %}
                     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #fdfdfd;">
 
                         <h3>{{ course.name }}</h3>
@@ -44,7 +64,6 @@
 
                         {% if is_granted('ROLE_USER') %}
                             {% set alreadyEnrolled = app.user.enrollments|filter(e => e.course.id == course.id)|length > 0 %}
-
                             {% if alreadyEnrolled %}
                                 <button disabled style="margin-top: 10px; background-color: #d3d3d3; cursor: not-allowed;">
                                     ✅ Enrolled
@@ -60,7 +79,6 @@
                             <p style="margin-top: 10px;">🔒 Login to enroll</p>
                         {% endif %}
                     </div>
-                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}
