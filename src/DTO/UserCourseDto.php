@@ -4,21 +4,23 @@ namespace App\DTO;
 
 class UserCourseDto
 {
-    public int $userId;
+    public int $id;
     public string $email;
-    public array $courses;
+    public array $courses = [];
 
-    public function __construct($user)
+    public function __construct(\App\Entity\User $user)
     {
-        $this->userId = $user->getId();
+        $this->id = $user->getId();
         $this->email = $user->getEmail();
-        $this->courses = [];
 
         foreach ($user->getEnrollments() as $enrollment) {
-            $this->courses[] = [
-                'course_id' => $enrollment->getCourse()->getId(),
-                'course_name' => $enrollment->getCourse()->getName(),
-            ];
+            $course = $enrollment->getCourse();
+            if ($course->getDeletedAt() === null) {
+                $this->courses[] = [
+                    'id' => $course->getId(),
+                    'name' => $course->getName(),
+                ];
+            }
         }
     }
 }

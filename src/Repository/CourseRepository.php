@@ -20,6 +20,13 @@ class CourseRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Course::class);
     }
+    public function findAllActive(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.deletedAt IS NULL')
+            ->getQuery()
+            ->getResult();
+    }
 
 //    /**
 //     * @return Course[] Returns an array of Course objects

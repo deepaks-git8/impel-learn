@@ -20,7 +20,7 @@ class ApiController extends AbstractController
     {
 //        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $results = $courseRepo->findAll();
+        $results = $courseRepo->findAllActive();
         $responseInJson = [];
 
         foreach ($results as $course) {
@@ -80,14 +80,47 @@ class ApiController extends AbstractController
         return $this->json($response);
     }
 
-    #[Route('/courses-with-users', name:'app_courses_with_users')]
-    public function getCoursesWithUsers(CourseRepository $courseRepo)
+    #[Route('/courses-with-users', name:'app_courses_with_users_test')]
+    public function getCoursesWithUsersTest(CourseRepository $courseRepo)
     {
         $courses = $courseRepo->findAll();
 
         foreach ($courses as $course){
             dd($course->getEnrollments(), $course->getName(), $course->getEnrollments());
         }
+    }
+
+    #[Route('/api/courses-with-users', name: 'app_courses_with_users', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function getCoursesWithUsers(CourseRepository $courseRepo): JsonResponse
+    {
+        $courses = $courseRepo->findAll();
+        $response = [];
+
+        foreach ($courses as $course) {
+
+            if ($course->getDeletedAt() !== null) {
+                continue;
+            }
+
+            $courseData = [
+                'course_id' => $course->getId(),
+                'course_name' => $course->getName(),
+                'users' => [],
+            ];
+
+            foreach ($course->getEnrollments() as $enrollment) {
+                $user = $enrollment->getUser();
+                $courseData['users'][] = [
+                    'user_id' => $user->getId(),
+                    'email' => $user->getEmail(),
+                ];
+            }
+
+            $response[] = $courseData;
+        }
+
+        return $this->json($response);
     }
 
 }

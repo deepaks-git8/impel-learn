@@ -24,6 +24,10 @@ class Course
     #[ORM\Column(length: 10000)]
     private ?string $description = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $deletedAt = null;
+
+
     public function __construct()
     {
         $this->enrollments = new ArrayCollection();
@@ -85,5 +89,17 @@ class Course
 
         return $this;
     }
+
+    public function getDeletedAt(): ?\DateTimeImmutable
+    {
+        return $this->deletedAt;
+    }
+
+    public function setDeletedAt(?\DateTimeImmutable $deletedAt): self
+    {
+        $this->deletedAt = $deletedAt;
+        return $this;
+    }
+
 }
 

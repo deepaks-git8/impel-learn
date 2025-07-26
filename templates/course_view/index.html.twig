@@ -21,7 +21,12 @@
         {% else %}
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
                 {% for course in courses %}
+                    {% if course.deletedAt is null  %}
+                        {# show course details #}
+
+
                     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #fdfdfd;">
+
                         <h3>{{ course.name }}</h3>
 
                         {% if is_granted('ROLE_ADMIN') %}
@@ -55,6 +60,7 @@
                             <p style="margin-top: 10px;">🔒 Login to enroll</p>
                         {% endif %}
                     </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         {% endif %}

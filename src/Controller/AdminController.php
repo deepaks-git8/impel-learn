@@ -73,8 +73,13 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Course not found.');
         }
 
-        $em->remove($course);
+
+//        $em->remove($course);
+//        $em->flush();
+        $course->setDeletedAt(new \DateTimeImmutable());
+        $em->persist($course);
         $em->flush();
+
 
         $this->addFlash('success', 'Course deleted successfully!');
         return $this->redirectToRoute('app_course_view');

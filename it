@@ -1,0 +1,63 @@
+[33mcommit 70ca5dc33d6e5977c71d7d760965f1615388d5e6[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Sat Jul 26 15:18:25 2025 +0530
+
+    Users With Course Api Added
+
+[33mcommit 2ddecc147cd75939e40329dece8e1bb0e6052a57[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Sat Jul 26 14:30:06 2025 +0530
+
+    DTO testing and edit form fix
+
+[33mcommit 2903a9fa3dd821f52dd6d82db59b9510b8833430[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Wed Jul 23 22:15:36 2025 +0530
+
+    added a space after course entities code
+
+[33mcommit 86d017b51af6d36dde37cc2fbe2ab4ef2a9298b0[m[33m ([m[1;31morigin/feature/admin-course-crud[m[33m, [m[1;32mfeature/admin-course-crud[m[33m)[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Wed Jul 23 16:03:36 2025 +0530
+
+    crud feature added, api endpoints created, jwt authentication done
+
+[33mcommit 7b06b176f24a8c6272c67046b46da5968a8942db[m
+Merge: 06436f0 716a275
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Fri Jul 11 15:47:00 2025 +0530
+
+    Merge branch 'feature/login'
+
+[33mcommit 716a275c05ac355c556868c91b9c8bdc67662c60[m[33m ([m[1;31morigin/feature/login[m[33m, [m[1;32mfeature/login[m[33m)[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Fri Jul 11 15:39:42 2025 +0530
+
+    Finalizing Login Feature, ready for merge will work on design later
+
+[33mcommit d91a22d1107768688ab1d78ff2ce7951e59d7a3b[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Fri Jul 11 01:35:54 2025 +0530
+
+    Implemented user login, role-based access, and DB migration
+
+[33mcommit 06436f01548e954690e2a7cf3312070bae7a987f[m
+Merge: 7c1af4e 283136f
+Author: deepaks-git8 <deepak.singh@impelsys.com>
+Date:   Thu Jul 3 11:59:04 2025 +0530
+
+    Merge pull request #1 from deepaks-git8/feature/login
+    
+    init: setup login feature branch with base files
+
+[33mcommit 283136fc74ed7f4a8ecc0b5a3e8b73b1d1c9a86c[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Thu Jul 3 11:54:06 2025 +0530
+
+    init: setup login feature branch with base files
+
+[33mcommit 7c1af4ef5c62e0a18225119daf123811b9ae7b7c[m
+Author: Deepak Kumar <deepakkumar.cse2@gmail.com>
+Date:   Thu Jul 3 11:41:22 2025 +0530
+
+    inital commit
