@@ -18,7 +18,7 @@ class RegisterController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
-        UserPasswordHasherInterface $passwordHasher,
+        UserPasswordHasherInterface $passwordHasher,   //bcrypt hashing algo by default
         EntityManagerInterface $entityManager
     ): Response {
         $user = new User();

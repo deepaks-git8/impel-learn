@@ -19,17 +19,17 @@
             </select>
         </form>
 
-        {% set activeEnrollments = enrollments|filter(e => e.course.deletedAt is null) %}
+        {% set activeEnrollments = enrollments|filter(e => e.courseDeletedAt is null) %}
         {% set sort = app.request.get('sort') %}
 
         {% if sort == 'name_asc' %}
-            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.course.name <=> b.course.name) %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.courseName <=> b.courseName) %}
         {% elseif sort == 'name_desc' %}
-            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.course.name <=> a.course.name) %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.courseName <=> a.courseName) %}
         {% elseif sort == 'recent' %}
-            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.course.id <=> a.course.id) %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => b.courseId <=> a.courseId) %}
         {% elseif sort == 'oldest' %}
-            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.course.id <=> b.course.id) %}
+            {% set activeEnrollments = activeEnrollments|sort((a, b) => a.courseId <=> b.courseId) %}
         {% endif %}
 
         {% if activeEnrollments is empty %}
@@ -41,9 +41,9 @@
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
                 {% for enrollment in activeEnrollments %}
                     <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #f9f9f9;">
-                        <h3>{{ enrollment.course.name }}</h3>
+                        <h3>{{ enrollment.courseName }}</h3>
 
-                        <a href="{{ path('app_course_content', { id: enrollment.course.id }) }}" style="display: inline-block; margin-top: 10px; color: #0056b3;">
+                        <a href="{{ path('app_course_content', { id: enrollment.courseId }) }}" style="display: inline-block; margin-top: 10px; color: #0056b3;">
                             🔍 View Course
                         </a>
                     </div>

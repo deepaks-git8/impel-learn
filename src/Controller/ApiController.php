@@ -13,7 +13,7 @@ use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use App\DTO\CourseDto;
+use App\DTO\CourseDtoApi;
 
 class ApiController extends AbstractController
 {
@@ -33,7 +33,7 @@ class ApiController extends AbstractController
 //            ];
 //        }
         $dtoResponse = array_map(function(Course $course){
-            return new CourseDto($course);
+            return new CourseDtoApi($course);
         }, $courses);
         return new JsonResponse($dtoResponse);
     }
@@ -42,8 +42,8 @@ class ApiController extends AbstractController
     public function testing(CourseRepository $courseRepo){
         $courses = $courseRepo->findAll();
         $dtoResult = array_map(function(Course $course) {
-//            return new CourseDto($c->getId(), $c->getName());
-            return new CourseDto($course );
+//            return new CourseDtoApi($c->getId(), $c->getName());
+            return new CourseDtoApi($course );
         }
             , $courses);
 

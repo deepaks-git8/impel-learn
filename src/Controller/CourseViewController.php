@@ -2,6 +2,12 @@
 
 namespace App\Controller;
 
+use App\DTO\CourseContentViewDto;
+use App\DTO\CourseDtoApi;
+use App\DTO\CourseDtoTwig;
+use App\DTO\EnrollmentViewDto;
+use App\Entity\Course;
+use App\Entity\Enrollment;
 use App\Form\CourseType;
 use App\Form\RegistrationFormType;
 use App\Repository\CourseRepository;
@@ -17,9 +23,16 @@ class CourseViewController extends AbstractController
     {
         $courses = $course->findAll();
 
+//        return $this->render('course_view/index.html.twig', [
+//            'controller_name' => 'CourseViewController',
+//            'courses' => $courses
+//        ]);
+
+        $courseDtos = array_map(fn(Course $course) => new CourseDtoTwig($course), $courses);
+
         return $this->render('course_view/index.html.twig', [
             'controller_name' => 'CourseViewController',
-            'courses' => $courses
+            'courses' => $courseDtos,
         ]);
     }
 
@@ -32,8 +45,10 @@ class CourseViewController extends AbstractController
             throw $this->createAccessDeniedException();
         }
 
+        $dtoEnrollments = array_map(fn(Enrollment $e) => new EnrollmentViewDto($e), $user->getEnrollments()->toArray());
+
         return $this->render('course_view/dashboard.html.twig', [
-            'enrollments' => $user->getEnrollments(),
+            'enrollments' => $dtoEnrollments,
         ]);
     }
 
@@ -51,8 +66,10 @@ class CourseViewController extends AbstractController
         }
 
 
+        $courseDto = new CourseContentViewDto($course);
+
         return $this->render('course_view/content.html.twig', [
-            'course' => $course,
+            'course' => $courseDto,
         ]);
     }
 
