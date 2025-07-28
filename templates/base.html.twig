@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Welcome!{% endblock %}</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
+    <title>{% block title %}Welcome | ImpelLearn{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>📘</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -14,41 +17,124 @@
     {% endblock %}
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #f8f9fb;
+            color: #2c2f33;
+        }
+
         nav {
-            background-color: #343a40;
-            padding: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 24px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            flex-wrap: wrap;
         }
-        nav a {
-            color: white;
-            margin-right: 15px;
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #3f88c5;
             text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            margin-right: 20px;
         }
+
+        nav a {
+            color: #3f88c5;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
         nav a:hover {
-            background-color: #495057;
+            background-color: #e3f2fd;
+            color: #2b6cb0;
+        }
+
+        nav a.logout {
+            background-color: #e63946;
+            color: white;
+        }
+
+        nav a.logout:hover {
+            background-color: #c82333;
+        }
+
+        nav a.login {
+            background-color: #3f88c5;
+            color: white;
+        }
+
+        nav a.login:hover {
+            background-color: #306f9f;
+        }
+
+        @media (max-width: 640px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-left,
+            .nav-right {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
+        }
+
+        main {
+            padding: 90px 20px 30px; /* Extra top padding due to fixed nav */
         }
     </style>
 </head>
 
 <body>
 <nav>
-    {% if app.user %}
-        <a href="{{ path('user_dashboard') }}">📚 My Dashboard</a>
-        <a href="{{ path('app_course_view') }}">🎒 Browse Courses</a>
+    <div class="nav-left">
+        <a href="{{ path('user_dashboard') }}" class="brand">ImpelLearn</a>
+        {% if app.user %}
+            <a href="{{ path('user_dashboard') }}">📚 Dashboard</a>
+            <a href="{{ path('app_course_view') }}">🎒 Courses</a>
+        {% else %}
+{#            <a href="{{ path('app_course_view') }}">🎒 Courses</a>#}
+        {%  endif %}
+    </div>
 
-{#        {% if is_granted('ROLE_ADMIN') %}#}
-{#            <a href="{{ path('app_admin') }}" style="background-color: #28a745;">🛠️ Manage Courses</a>#}
-{#        {% endif %}#}
-
-        <a href="{{ path('app_logout') }}" style="background-color: #dc3545;">Logout</a>
-    {% else %}
-        <a href="{{ path('app_login') }}" style="background-color: #007bff;">Login</a>
-        <a href="{{ path('app_register') }}">Register</a>
-
-    {% endif %}
+    <div class="nav-right">
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}" class="logout">Logout</a>
+        {% else %}
+            <a href="{{ path('app_login') }}" class="login">Login</a>
+            <a href="{{ path('app_register') }}">Register</a>
+        {% endif %}
+    </div>
 </nav>
 
-{% block body %}{% endblock %}
+<main>
+    {% block body %}{% endblock %}
+</main>
 </body>
 </html>

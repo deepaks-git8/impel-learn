@@ -1,22 +1,172 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Available Courses{% endblock %}
+{% block title %}Available Courses | ImpelLearn{% endblock %}
 
 {% block body %}
-    <div style="max-width: 1000px; margin: auto; padding: 20px;">
-        <h1 style="margin-bottom: 30px;">📚 Available Courses</h1>
+    <style>
+        .course-container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .course-header {
+            margin-bottom: 20px;
+        }
+
+        .course-header h1 {
+            font-size: 1.8rem;
+            margin: 0;
+            color: #3f88c5;
+        }
+
+        .course-header p {
+            margin-top: 4px;
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .sort-form {
+            margin: 20px 0;
+        }
+
+        .sort-form label {
+            font-weight: 500;
+            margin-right: 10px;
+        }
+
+        .sort-form select {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .course-card {
+            background-color: #ffffff;
+            padding: 18px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            min-height: 260px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .course-card h3 {
+            margin: 0 0 16px;
+            font-size: 1.1rem;
+            color: #3f88c5;
+            min-height: 48px;
+        }
+
+        .card-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #e63946;
+            color: white;
+        }
+
+        .enroll-btn {
+            background-color: #212529;
+            color: white;
+        }
+
+        .enrolled-btn {
+            background-color: #adb5bd;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .login-note {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .add-course-card {
+            border: 2px dashed #aaa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #fefefe;
+        }
+
+        .add-course-link {
+            display: inline-block;
+            padding: 20px;
+            text-decoration: none;
+            background-color: #28a745;
+            color: white;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            margin-top: 20px;
+            color: #777;
+        }
+
+        .empty-message a {
+            color: #3f88c5;
+            text-decoration: none;
+        }
+
+        .empty-message a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="course-container">
+        <div class="course-header">
+            <h1>📘 Available Courses</h1>
+            <p>Explore and enroll in your favorite courses</p>
+        </div>
 
         {% if is_granted('ROLE_ADMIN') %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
-                <div style="border: 2px dashed #aaa; padding: 15px; border-radius: 8px; text-align: center; background-color: #fefefe;">
-                    <a href="{{ path('app_add_course') }}" style="display: inline-block; padding: 20px; text-decoration: none; background-color: #28a745; color: white; border-radius: 6px;">
+            <div class="course-grid" style="margin-bottom: 40px;">
+                <div class="add-course-card">
+                    <a href="{{ path('app_add_course') }}" class="add-course-link">
                         ➕ Add New Course
                     </a>
                 </div>
             </div>
         {% endif %}
 
-        <form method="get" action="{{ path('app_course_view') }}" style="margin-bottom: 20px;">
+        <form method="get" action="{{ path('app_course_view') }}" class="sort-form">
             <label for="sort">Sort By:</label>
             <select name="sort" id="sort" onchange="this.form.submit()">
                 <option value="">-- Select --</option>
@@ -41,43 +191,38 @@
         {% endif %}
 
         {% if filteredCourses is empty %}
-            <p>No courses available right now.</p>
+            <p class="empty-message">No courses available right now.</p>
         {% else %}
-            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+            <div class="course-grid">
                 {% for course in filteredCourses %}
-                    <div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; background-color: #fdfdfd;">
-
+                    <div class="course-card">
                         <h3>{{ course.name }}</h3>
 
-                        {% if is_granted('ROLE_ADMIN') %}
-                            <form action="{{ path('app_edit_course', { id: course.id }) }}" method="POST" style="margin-top: 10px;">
-                                <button type="submit" style="background-color: #007bff; color: white; padding: 6px 12px; border: none; border-radius: 4px;">
-                                    ✏️ Edit
-                                </button>
-                            </form>
-                            <form action="{{ path('app_delete_course', { id: course.id }) }}" method="POST" style="margin-top: 10px;">
-                                <button type="submit" style="background-color: red; color: white; padding: 6px 12px; border: none; border-radius: 4px;">
-                                    🗑️ Delete
-                                </button>
-                            </form>
-                        {% endif %}
-
-                        {% if is_granted('ROLE_USER') %}
-                            {% set alreadyEnrolled = app.user.enrollments|filter(e => e.course.id == course.id)|length > 0 %}
-                            {% if alreadyEnrolled %}
-                                <button disabled style="margin-top: 10px; background-color: #d3d3d3; cursor: not-allowed;">
-                                    ✅ Enrolled
-                                </button>
-                            {% else %}
-                                <form action="{{ path('app_enroll_course', { id: course.id }) }}" method="POST" style="margin-top: 10px;">
-                                    <button type="submit" style="background-color: black; color: white; padding: 6px 12px; border: none; border-radius: 4px;">
-                                        ➕ Enroll
-                                    </button>
+                        <div class="card-actions">
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <form action="{{ path('app_edit_course', { id: course.id }) }}" method="POST">
+                                    <button type="submit" class="action-btn edit-btn">✏️ Edit</button>
+                                </form>
+                                <form action="{{ path('app_delete_course', { id: course.id }) }}"
+                                      method="POST"
+                                      onsubmit="return confirm('Are you sure you want to delete {{ course.name }}?');">
+                                    <button type="submit" class="action-btn delete-btn">🗑️ Delete</button>
                                 </form>
                             {% endif %}
-                        {% else %}
-                            <p style="margin-top: 10px;">🔒 Login to enroll</p>
-                        {% endif %}
+
+                            {% if is_granted('ROLE_USER') %}
+                                {% set alreadyEnrolled = app.user.enrollments|filter(e => e.course.id == course.id)|length > 0 %}
+                                {% if alreadyEnrolled %}
+                                    <button class="action-btn enrolled-btn" disabled>✅ Enrolled</button>
+                                {% else %}
+                                    <form action="{{ path('app_enroll_course', { id: course.id }) }}" method="POST">
+                                        <button type="submit" class="action-btn enroll-btn">➕ Enroll</button>
+                                    </form>
+                                {% endif %}
+                            {% else %}
+                                <p class="login-note">🔒 Login to enroll</p>
+                            {% endif %}
+                        </div>
                     </div>
                 {% endfor %}
             </div>
