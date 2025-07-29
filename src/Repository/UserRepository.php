@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -24,6 +25,19 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
+    }
+
+
+
+    public function findUsersWithActiveCourses(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.enrollments', 'e')
+            ->leftJoin('e.course', 'c')
+            ->addSelect('e', 'c')
+            ->where('c.deletedAt IS NULL')
+            ->getQuery()
+            ->getResult();
     }
 
     /**

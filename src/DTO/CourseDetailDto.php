@@ -1,23 +1,20 @@
 <?php
 
-// src/DTO/CourseContentViewDto.php
 namespace App\DTO;
 
 use App\Entity\Course;
 
-class CourseContentViewDto
+class CourseDetailDto
 {
-    public int $id;
-    public string $name;
-    public string $description;
+    public string $id;
+    public string $title;
     public string $instructor;
     public string $duration;
 
     public function __construct(Course $course)
     {
         $this->id = $course->getId();
-        $this->name = $course->getName();
-        $this->description = $course->getDescription();
+        $this->title = $course->getName();
         $this->instructor = $course->getInstructor();
         $this->duration = $course->getDuration();
     }

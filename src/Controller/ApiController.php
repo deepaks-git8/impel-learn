@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\ApiResponseDto;
 use App\DTO\UserCourseDto;
 use App\DTO\UserDto;
 use App\Entity\Course;
@@ -14,6 +15,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use App\DTO\CourseDtoApi;
+use App\DTO\CourseDetailDto;
+use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class ApiController extends AbstractController
 {
@@ -21,75 +27,37 @@ class ApiController extends AbstractController
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index(CourseRepository $courseRepo): JsonResponse
     {
-//        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $courses = $courseRepo->findAllActive();
-//        $responseInJson = [];
-//
-//        foreach ($results as $course) {
-//            $responseInJson[] = [
-//                'id' => $course->getId(),
-//                'name' => $course->getName(),
-//            ];
-//        }
-        $dtoResponse = array_map(function(Course $course){
-            return new CourseDtoApi($course);
-        }, $courses);
-        return new JsonResponse($dtoResponse);
+        $dtoResponse = array_map(fn(Course $course) => new CourseDtoApi($course), $courses);
+        return new JsonResponse(new ApiResponseDto($dtoResponse));
     }
 
-    #[Route('/testing' , name:'app_test')]
-    public function testing(CourseRepository $courseRepo){
+    #[Route('/testing', name:'app_test')]
+    public function testing(CourseRepository $courseRepo): JsonResponse
+    {
         $courses = $courseRepo->findAll();
-        $dtoResult = array_map(function(Course $course) {
-//            return new CourseDtoApi($c->getId(), $c->getName());
-            return new CourseDtoApi($course );
-        }
-            , $courses);
-
-        return new JsonResponse($dtoResult);
+        $dtoResult = array_map(fn(Course $course) => new CourseDtoApi($course), $courses);
+        return new JsonResponse(new ApiResponseDto($dtoResult));
     }
 
     #[Route('/api/get-users/{course_id}', name:'app_get_user', methods: ['GET'])]
-    public function getUsers(int $course_id, EnrollmentRepository $enrollmentRepo) :JsonResponse {
-        $enrollments = $enrollmentRepo->findBy(['course'=> $course_id]);
-//        $responseInJson = [];
-//        foreach($enrollments as $enrollment){
-//        $user = $enrollment->getUser();
-//            $responseInJson [] = [
-//                'user_id'=> $user->getId(),
-//                'email'=> $user->getEmail()
-//            ];
-//        }
-        $dtoResponse = array_map(function(Enrollment $enrollment){
-            return new UserDto($enrollment);
-        }, $enrollments);
-
-        return new JsonResponse($dtoResponse);
-    }
-
-//    $responseInDTO = array_map(function ($course) {
-//        return new CourseDTO(
-//            $course->getId(),
-//            $course->getName()
-//        );
-//    }, $courses);
-
-
-
-    #[Route('/api/users-with-courses', name: 'app_users_with_courses', methods: ['GET'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function getUsersWithCourses(UserRepository $userRepo): JsonResponse
+    public function getUsers(int $course_id, EnrollmentRepository $enrollmentRepo): JsonResponse
     {
-        $users = $userRepo->findAll();
-        $response = [];
-
-        foreach ($users as $user) {
-            $response[] = new UserCourseDto($user);
-        }
-
-        return $this->json($response);
+        $enrollments = $enrollmentRepo->findBy(['course'=> $course_id]);
+        $dtoResponse = array_map(fn(Enrollment $enrollment) => new UserDto($enrollment), $enrollments);
+        return new JsonResponse(new ApiResponseDto($dtoResponse));
     }
+
+    #[Route('/api/users-with-courses', name: 'api_users_active_courses')]
+    public function getUsersWithActiveCourses(UserRepository $repo): JsonResponse
+    {
+        $users = $repo->findUsersWithActiveCourses();
+
+        $data = array_map(fn(User $user) => new UserCourseDto($user), $users);
+
+        return $this->json($data);
+    }
+
 
     #[Route('/courses-with-users', name:'app_courses_with_users_test')]
     public function getCoursesWithUsersTest(CourseRepository $courseRepo)
@@ -109,7 +77,6 @@ class ApiController extends AbstractController
         $response = [];
 
         foreach ($courses as $course) {
-
             if ($course->getDeletedAt() !== null) {
                 continue;
             }
@@ -131,7 +98,29 @@ class ApiController extends AbstractController
             $response[] = $courseData;
         }
 
-        return $this->json($response);
+        return new JsonResponse(new ApiResponseDto($response));
+    }
+
+    #[Route('/api/courses-detailed', name: 'app_api_courses_detailed', methods: ['GET'])]
+    public function getCoursesDetailed(CourseRepository $courseRepo): JsonResponse
+    {
+        $courses = $courseRepo->findAll();
+        $dtoList = array_map(fn(Course $course) => new CourseDetailDto($course), $courses);
+        return new JsonResponse(new ApiResponseDto($dtoList));
+    }
+
+    #[Route('/api/view-sorted-course', name: 'app_api_view_sorted_course', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function viewSortedCourse(CourseRepository $courseRepo, Request $request): JsonResponse
+    {
+        $sort = $request->query->get('sort', 'name');
+        $order = $request->query->get('order', 'asc');
+
+        $courses = $courseRepo->findAllSorted($sort, $order);
+
+        $dtoResponse = array_map(fn(Course $course) => new CourseDtoApi($course), $courses);
+
+        return new JsonResponse(new ApiResponseDto($dtoResponse));
     }
 
 }

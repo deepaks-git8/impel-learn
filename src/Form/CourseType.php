@@ -14,6 +14,8 @@ class CourseType extends AbstractType
         $builder
             ->add('Name')
             ->add('Description')
+            ->add('Instructor')
+            ->add('Duration')
         ;
     }
 

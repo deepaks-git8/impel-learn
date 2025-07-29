@@ -28,6 +28,24 @@ class CourseRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllSorted(string $sortField = 'name', string $order = 'asc'): array
+    {
+        $allowedFields = ['id', 'name', 'instructor', 'duration'];
+        if (!in_array($sortField, $allowedFields)) {
+            $sortField = 'name'; //  default case
+        }
+
+        $order = strtolower($order) === 'desc' ? 'DESC' : 'ASC';
+
+        return $this->createQueryBuilder('c')
+            ->where('c.deletedAt IS NULL')   // exclude deleted courses
+            ->orderBy("c.$sortField", $order)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
 //    /**
 //     * @return Course[] Returns an array of Course objects
 //     */
