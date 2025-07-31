@@ -6,7 +6,9 @@ use App\Entity\Course;
 use App\Form\CourseType;
 use App\Repository\CourseRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +16,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
 {
+    #[Route('/test-log', name: 'test_log')]
+    public function test(LoggerInterface $logger): JsonResponse
+    {
+//        dd($logger);
+        $logger->info('This is an info log');
+        $logger->warning('This is a warning');
+        $logger->error('This is an error');
+
+        return new JsonResponse(['status' => 'Logs written successfully']);
+    }
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {

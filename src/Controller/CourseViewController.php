@@ -29,11 +29,12 @@ class CourseViewController extends AbstractController
 //        ]);
 
         $courseDtos = array_map(fn(Course $course) => new CourseDtoTwig($course), $courses);
-
         return $this->render('course_view/index.html.twig', [
-            'controller_name' => 'CourseViewController',
-            'courses' => $courseDtos,
+            'courses' => $courseDtos
         ]);
+
+
+
     }
 
     #[Route('/dashboard', name: 'user_dashboard')]

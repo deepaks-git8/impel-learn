@@ -123,4 +123,36 @@ class ApiController extends AbstractController
         return new JsonResponse(new ApiResponseDto($dtoResponse));
     }
 
+    #[Route('/api/view-sorted-course/{sort}/{order}', name: 'app_api_view_sorted_course', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function viewSortedCourseRoute(
+        CourseRepository $courseRepo,
+        string $sort = 'name',
+        string $order = 'asc'
+    ): JsonResponse {
+        $courses = $courseRepo->findAllSorted($sort, $order);
+
+        $dtoResponse = array_map(fn(Course $course) => new CourseDtoApi($course), $courses);
+
+        return new JsonResponse(new ApiResponseDto($dtoResponse));
+    }
+
+    #[Route('/api/view-course-hashed', name: 'app_api_view_course', methods: ['GET'])]
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function index2(CourseRepository $courseRepo): JsonResponse
+    {
+        $courses = $courseRepo->findAllActive();
+
+
+        $dtoResponse = array_map(function(Course $course) {
+            $dto = new CourseDtoApi($course);
+            return [
+                'id' => $dto->getId(),
+                'name' => $dto->name,
+            ];
+        }, $courses);
+
+        return new JsonResponse(new ApiResponseDto($dtoResponse));
+    }
+
 }

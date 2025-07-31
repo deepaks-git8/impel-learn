@@ -28,4 +28,6 @@ final class Version20250728143731 extends AbstractMigration
         // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE course DROP instructor, DROP duration');
     }
+    //php bin/console doctrine:migrations:execute --down 20250729194501
+    //php bin/console doctrine:migrations:execute --down 20250729183020
 }

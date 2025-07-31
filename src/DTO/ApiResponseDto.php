@@ -10,6 +10,6 @@ class ApiResponseDto
     public function __construct(mixed $data)
     {
         $this->requested_at = (new \DateTime())->format(\DateTime::ATOM);
-        $this->data = $data;
+        $this->data = $data; //base64_encode((string)$course->getId())
     }
 }
