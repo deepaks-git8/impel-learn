@@ -137,7 +137,7 @@ class ApiController extends AbstractController
         return new JsonResponse(new ApiResponseDto($dtoResponse));
     }
 
-    #[Route('/api/view-course-hashed', name: 'app_api_view_course', methods: ['GET'])]
+    #[Route('/api/view-course-hashed', name: 'app_api_view_course_hashed', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
     public function index2(CourseRepository $courseRepo): JsonResponse
     {

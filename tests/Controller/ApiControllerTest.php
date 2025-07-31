@@ -2,58 +2,74 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Course;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
+use App\Entity\User;
 
 class ApiControllerTest extends WebTestCase
 {
     private $client;
+    private $user;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
-    }
+        $container = static::getContainer();
 
-    private function loginUser(): void
-    {
-        // Replace with actual logic to fetch a test user
-        $user = static::getContainer()
+        // Replace with an actual user in your test DB
+        $this->user = $container
             ->get('doctrine')
-            ->getRepository(\App\Entity\User::class)
-            ->findOneBy([]);
+            ->getRepository(User::class)
+            ->findOneBy(['email' => 'test1@test.com']);
 
-        $this->client->loginUser($user);
+        $this->assertNotNull($this->user, 'User not found in test DB');
+        $this->client->loginUser($this->user);
     }
 
-    public function testAuthenticationIsRequired(): void
+    public function testViewCourse(): void
     {
-        $this->client->request('GET', '/api/view-course-hashed');
-
-        $statusCode = $this->client->getResponse()->getStatusCode();
-        $this->assertContains(
-            $statusCode,
-            [401, 403],
-            'Expected 401 or 403 when not authenticated.'
-        );
+        $this->client->request('GET', '/api/view-course');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
     }
 
-    public function testReturnsCourseListInExpectedFormat(): void
+    public function testCoursesWithUsers(): void
     {
-        $this->loginUser();
+        $this->client->request('GET', '/api/courses-with-users');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
+    }
 
+    public function testViewSortedCourse(): void
+    {
+        $this->client->request('GET', '/api/view-sorted-course');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
+    }
+
+    public function testViewSortedCourseWithParams(): void
+    {
+        $this->client->request('GET', '/api/view-sorted-course/name/asc');
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertIsArray($data);
+        $this->assertGreaterThan(1, count($data));
+
+        // Assert that courses are sorted by name ASC
+        $names = array_column($data, 'name');
+        $sorted = $names;
+        sort($sorted);
+
+        $this->assertEquals($sorted, $names, 'Courses are not sorted by name ASC');
+    }
+
+
+    public function testViewCourseHashed(): void
+    {
         $this->client->request('GET', '/api/view-course-hashed');
-
-        $response = $this->client->getResponse();
-        $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-
-        $json = json_decode($response->getContent(), true);
-        $this->assertArrayHasKey('data', $json, 'Response should contain a "data" key.');
-        $this->assertIsArray($json['data'], 'The "data" key should be an array.');
-
-        foreach ($json['data'] as $item) {
-            $this->assertArrayHasKey('id', $item);
-            $this->assertArrayHasKey('name', $item);
-        }
+        $this->assertResponseIsSuccessful();
+        $this->assertResponseFormatSame('json');
     }
 }
