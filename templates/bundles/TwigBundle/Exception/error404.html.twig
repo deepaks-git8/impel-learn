@@ -1,0 +1,22 @@
+{# templates/bundles/TwigBundle/Exception/error.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Oops! An Error Occurred 😢{% endblock %}
+
+{% block body %}
+    <div style="text-align: center; padding: 40px;">
+        <h1> Oops! {{ status_code }} Error</h1>
+        <p>{{ status_text }}</p>
+
+        <div style="margin: 20px auto;">
+            <img src="https://http.cat/{{ status_code }}" alt="Error image" style="max-width: 300px;">
+        </div>
+
+        <p>We're working to fix this as soon as possible. 🛠️</p>
+
+        {# Optional debug info (hide in production) #}
+        {% if exception is defined and app.debug %}
+            <pre style="text-align: left; margin: 20px auto; max-width: 600px;">{{ exception.message }}</pre>
+        {% endif %}
+    </div>
+{% endblock %}

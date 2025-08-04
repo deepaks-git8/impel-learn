@@ -40,7 +40,7 @@ class ApiController extends AbstractController
         return new JsonResponse(new ApiResponseDto($dtoResult));
     }
 
-    #[Route('/api/get-users/{course_id}', name:'app_get_user', methods: ['GET'])]
+    #[Route('/api/get-users/{course_id}', name: 'app_get_user', requirements: ['course_id' => '\d+'], methods: ['GET'])]
     public function getUsers(int $course_id, EnrollmentRepository $enrollmentRepo): JsonResponse
     {
         $enrollments = $enrollmentRepo->findBy(['course'=> $course_id]);
@@ -104,7 +104,7 @@ class ApiController extends AbstractController
     #[Route('/api/courses-detailed', name: 'app_api_courses_detailed', methods: ['GET'])]
     public function getCoursesDetailed(CourseRepository $courseRepo): JsonResponse
     {
-        $courses = $courseRepo->findAll();
+        $courses = $courseRepo->findAllActive();
         $dtoList = array_map(fn(Course $course) => new CourseDetailDto($course), $courses);
         return new JsonResponse(new ApiResponseDto($dtoList));
     }

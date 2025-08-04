@@ -6,7 +6,7 @@ use App\Entity\Course;
 
 class CourseDtoApi
 {
-    private string $id;
+    public string $id;
     public string $name;
 
     public function __construct(Course $course)

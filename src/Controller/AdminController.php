@@ -19,12 +19,13 @@ class AdminController extends AbstractController
     #[Route('/test-log', name: 'test_log')]
     public function test(LoggerInterface $logger): JsonResponse
     {
-//        dd($logger);
         $logger->info('This is an info log');
         $logger->warning('This is a warning');
         $logger->error('This is an error');
 
-        return new JsonResponse(['status' => 'Logs written successfully']);
+        throw new \Exception("This is a test error");
+
+        return new JsonResponse(['status' => 'logged']);
     }
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
@@ -96,6 +97,9 @@ class AdminController extends AbstractController
         $this->addFlash('success', 'Course deleted successfully!');
         return $this->redirectToRoute('app_course_view');
     }
+
+
+
 
 
 }
