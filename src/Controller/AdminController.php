@@ -27,22 +27,29 @@ class AdminController extends AbstractController
 
         return new JsonResponse(['status' => 'logged']);
     }
+
     #[Route('/admin', name: 'app_admin')]
     public function index(): Response
     {
-        return $this->render('admin/index.html.twig', [
+        $response = $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
         ]);
+
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 
     #[Route('/admin/add', name: 'app_add_course')]
-    public function addCourse(EntityManagerInterface $em, Request $request) : Response
+    public function addCourse(EntityManagerInterface $em, Request $request): Response
     {
         $course = new Course();
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($course);
             $em->flush();
 
@@ -50,20 +57,25 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_course_view');
         }
 
-        return $this->render('course_view/new.html.twig', [
+        $response = $this->render('course_view/new.html.twig', [
             'form' => $form->createView(),
         ]);
 
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 
     #[Route('/admin/edit/{id}', name: 'app_edit_course')]
-    public function editCourse(int $id, EntityManagerInterface $em, Request $request, CourseRepository $courseRepo) : Response
+    public function editCourse(int $id, EntityManagerInterface $em, Request $request, CourseRepository $courseRepo): Response
     {
-        $course = $courseRepo->find(['id'=>$id]);
+        $course = $courseRepo->find(['id' => $id]);
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
 
+        if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($course);
             $em->flush();
 
@@ -71,10 +83,15 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_course_view');
         }
 
-        return $this->render('course_view/edit.html.twig', [
+        $response = $this->render('course_view/edit.html.twig', [
             'form' => $form->createView(),
         ]);
 
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 
     #[Route('/admin/delete/{id}', name: 'app_delete_course')]
@@ -86,20 +103,17 @@ class AdminController extends AbstractController
             throw $this->createNotFoundException('Course not found.');
         }
 
+        if (!$course->getEnrollments()->isEmpty()) {
+            $this->addFlash('warning', 'Cannot delete course: one or more users are enrolled.');
+            return $this->redirectToRoute('app_course_view');
+        }
 
-//        $em->remove($course);
-//        $em->flush();
+        // Soft delete
         $course->setDeletedAt(new \DateTimeImmutable());
         $em->persist($course);
         $em->flush();
 
-
         $this->addFlash('success', 'Course deleted successfully!');
         return $this->redirectToRoute('app_course_view');
     }
-
-
-
-
-
 }

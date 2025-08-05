@@ -4,14 +4,17 @@
 
 {% block body %}
     <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ccc; border-radius: 8px; background-color: #fafafa;">
+        <div style="margin-bottom: 20px;">
+            <a href="{{ path('app_course_view') }}" style="display: inline-block; margin-bottom: 20px; text-decoration: none; color: #2563eb; font-weight: bold;">
+                ← Back to Dashboard
+            </a>
+        </div>  
         <h2 style="text-align: center; margin-bottom: 30px;">➕ Edit Course</h2>
 
         {{ form_start(form) }}
 
         {# Global form errors (e.g., CSRF or general errors) #}
-        <div style="color: red; font-size: 0.9rem;">
-            {{ form_errors(form) }}
-        </div>
+
 
         <div style="display: flex; flex-direction: column; gap: 12px;">
             <div>
@@ -44,7 +47,9 @@
                 Submit
             </button>
         </div>
-
+        <div style="color: red; font-size: 0.9rem;">
+            {{ form_errors(form) }}
+        </div>
         {{ form_end(form) }}
     </div>
 {% endblock %}

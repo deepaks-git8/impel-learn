@@ -1,0 +1,75 @@
+{# templates/test/flash.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Flash Message Debug{% endblock %}
+
+{% block body %}
+    <div style="max-width: 800px; margin: 2em auto; padding: 2em; background: white; border-radius: 8px;">
+        <h1>🔍 Flash Message Debug</h1>
+
+        <div style="background: #f8f9fa; padding: 1em; border-radius: 4px; margin: 1em 0; font-family: monospace;">
+            <h3>Session Info:</h3>
+            {% if sessionId is defined %}
+                <p><strong>Session ID:</strong> {{ sessionId }}</p>
+                <p><strong>Session Started:</strong> {{ sessionStarted ? 'Yes' : 'No' }}</p>
+            {% endif %}
+
+            {% if flashMessages is defined %}
+                <h4>Flash Messages in Bag (peek):</h4>
+                <pre>{{ dump(flashMessages) }}</pre>
+            {% endif %}
+        </div>
+
+        <div style="background: #e3f2fd; padding: 1em; border-radius: 4px; margin: 1em 0;">
+            <h3>🔍 Raw Flash Debug:</h3>
+            <p><strong>app.flashes exists:</strong> {{ app.flashes is defined ? 'Yes' : 'No' }}</p>
+            <p><strong>app.flashes length:</strong> {{ app.flashes|length }}</p>
+
+            {% if app.flashes|length > 0 %}
+                <h4>All Flash Messages:</h4>
+                {% for type, messages in app.flashes %}
+                    <div style="margin: 0.5em 0; padding: 0.5em; background: rgba(0,0,0,0.05);">
+                        <strong>{{ type|upper }}:</strong>
+                        <ul>
+                            {% for message in messages %}
+                                <li>{{ message }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: red;">❌ NO FLASH MESSAGES FOUND!</p>
+            {% endif %}
+        </div>
+
+        <div style="background: #fff3cd; padding: 1em; border-radius: 4px; margin: 1em 0;">
+            <h3>🧪 Test Actions:</h3>
+            <p><a href="{{ path('test_flash') }}" style="display: inline-block; padding: 0.5em 1em; background: #007bff; color: white; text-decoration: none; border-radius: 4px; margin: 0.25em;">🔄 Reload This Test</a></p>
+            <p><a href="{{ path('test_flash_redirect') }}" style="display: inline-block; padding: 0.5em 1em; background: #28a745; color: white; text-decoration: none; border-radius: 4px; margin: 0.25em;">🔄 Test Flash + Redirect</a></p>
+            <p><a href="{{ path('app_register') }}" style="display: inline-block; padding: 0.5em 1em; background: #6c757d; color: white; text-decoration: none; border-radius: 4px; margin: 0.25em;">📝 Back to Register</a></p>
+        </div>
+
+        {% if redirectTest is defined %}
+            <div style="background: #d1ecf1; padding: 1em; border-radius: 4px; margin: 1em 0;">
+                <h3>📍 Redirect Test Result</h3>
+                <p>This page was reached via redirect. Flash messages should appear above if working correctly.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Additional debug in console
+        console.log('Flash messages from Twig:', {{ app.flashes|json_encode|raw }});
+        console.log('Page loaded, checking for flash messages...');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashContainer = document.getElementById('flashContainer');
+            if (flashContainer) {
+                console.log('Flash container found:', flashContainer);
+                console.log('Flash container children:', flashContainer.children.length);
+            } else {
+                console.error('Flash container NOT found!');
+            }
+        });
+    </script>
+{% endblock %}

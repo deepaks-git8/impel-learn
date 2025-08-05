@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %}Welcome | ImpelLearn{% endblock %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{#    <meta charset="UTF-8">#}
+{#    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />#}
+{#    <meta http-equiv="Pragma" content="no-cache" />#}
+{#    <meta http-equiv="Expires" content="0" />#}
 
+    <title>{% block title %}Welcome | ImpelLearn{% endblock %}</title>
+    <meta name="viewp   ort" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>📘</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
@@ -37,7 +40,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 14px 24px;
+            padding: 14px    24px;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
             z-index: 1000;
             flex-wrap: wrap;
@@ -91,6 +94,134 @@
             background-color: #306f9f;
         }
 
+        /* Flash Messages Styles */
+        .flash-messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+            pointer-events: none;
+        }
+
+        .flash-message {
+            background: white;
+            padding: 10px 14px;
+            margin: 10px auto;
+            border-radius: 8px;
+            border-left: 3px solid;
+            font-weight: 500;
+            font-size: 0.92rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            animation: slideInRight 0.35s ease-out;
+            pointer-events: auto;
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            max-width: 360px;
+        }
+
+        .flash-message.flash-success {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+            color: #065f46;
+        }
+
+        .flash-message.flash-error {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2 0%, #fef1f1 100%);
+            color: #991b1b;
+        }
+
+        .flash-message.flash-warning {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+            color: #92400e;
+        }
+
+        .flash-message.flash-info {
+            border-left-color: #3b82f6;
+            background: linear-gradient(135deg, #eff6ff 0%, #f0f9ff 100%);
+            color: #1e40af;
+        }
+
+        .flash-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .flash-content {
+            flex: 1;
+            line-height: 1.5;
+        }
+
+        .flash-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: inherit;
+            opacity: 0.6;
+            padding: 0;
+            margin-left: 8px;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: opacity 0.2s ease;
+        }
+
+        .flash-close:hover {
+            opacity: 1;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        .flash-message.removing {
+            animation: slideOutRight 0.3s ease-in forwards;
+        }
+
+        /* Progress bar for auto-hide */
+        .flash-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: currentColor;
+            opacity: 0.3;
+            border-radius: 0 0 12px 12px;
+            animation: flashProgress 5s linear forwards;
+        }
+
+        @keyframes flashProgress {
+            from {
+                width: 100%;
+            }
+            to {
+                width: 0%;
+            }
+        }
+
         @media (max-width: 640px) {
             nav {
                 flex-direction: column;
@@ -103,10 +234,37 @@
                 justify-content: space-between;
                 margin-top: 8px;
             }
+
+            .flash-messages {
+                top: 120px;
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+
+            .flash-message {
+                margin-bottom: 8px;
+            }
         }
 
         main {
-            padding: 90px 20px 30px; /* Extra top padding due to fixed nav */
+            padding: 90px 20px 30px;
+            /* Extra top padding due to fixed nav */
+        }
+
+        nav a.active {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+            font-weight: 600;
+            box-shadow: inset 0 -2px 0 #3b82f6;
+        }
+
+
+        @media (max-width: 640px) {
+            main {
+                padding: 140px 20px 30px;
+                /* More padding on mobile due to taller nav */
+            }
         }
     </style>
 </head>
@@ -116,25 +274,106 @@
     <div class="nav-left">
         <a href="{{ path('user_dashboard') }}" class="brand">ImpelLearn</a>
         {% if app.user %}
-            <a href="{{ path('user_dashboard') }}">📚 Dashboard</a>
-            <a href="{{ path('app_course_view') }}">🎒 Courses</a>
-        {% else %}
-{#            <a href="{{ path('app_course_view') }}">🎒 Courses</a>#}
-        {%  endif %}
+            <a href="{{ path('user_dashboard') }}"
+               class="{{ app.request.attributes.get('_route') starts with 'user_dashboard' ? 'active' : '' }}">📚 Dashboard</a>
+            <a href="{{ path('app_course_view') }}"
+               class="{{ app.request.attributes.get('_route') starts with 'app_course_view' ? 'active' : '' }}">🎒 Courses</a>
+        {% endif %}
     </div>
-
     <div class="nav-right">
         {% if app.user %}
-            <a href="{{ path('app_logout') }}" class="logout">Logout</a>
+            <a style="background-color: #f13737" href="{{ path('app_logout') }}">Logout</a>
         {% else %}
-            <a href="{{ path('app_login') }}" class="login">Login</a>
-            <a href="{{ path('app_register') }}">Register</a>
+            <a href="{{ path('app_login') }}"
+               class="login {{ app.request.attributes.get('_route') == 'app_login' ? 'active' : '' }}">Login</a>
+            <a href="{{ path('app_register') }}"
+               class="{{ app.request.attributes.get('_route') == 'app_register' ? 'active' : '' }}">Register</a>
         {% endif %}
     </div>
 </nav>
 
+
+{# Flash Messages Container #}
+<div class="flash-messages" id="flashContainer">
+    {% set flash_messages = app.session.flashbag.all %}
+    {% for type, messages in flash_messages %}
+        {% for message in messages %}
+            <div class="flash-message flash-{{ type }}" data-flash-type="{{ type }}">
+                <div class="flash-icon">
+                    {% if type == 'success' %}✅
+                    {% elseif type == 'error' %}❌
+                    {% elseif type == 'warning' %}⚠️
+                    {% elseif type == 'info' %}ℹ️
+                    {% else %}💬
+                    {% endif %}
+                </div>
+                <div class="flash-content">{{ message }}</div>
+                <button type="button" class="flash-close" onclick="removeFlashMessage(this.parentElement)">&times;</button>
+                <div class="flash-progress"></div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+
 <main>
     {% block body %}{% endblock %}
 </main>
+
+<script>
+    // Flash message functionality
+    function removeFlashMessage(element) {
+        element.classList.add('removing');
+        setTimeout(() => {
+            if (element.parentNode) {
+                element.remove();
+            }
+        }, 300);
+    }
+
+    // Auto-hide flash messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const flashMessages = document.querySelectorAll('.flash-message');
+
+        flashMessages.forEach(function(message) {
+            // Auto-hide after 5 seconds
+            setTimeout(function() {
+                if (message.parentNode && !message.classList.contains('removing')) {
+                    removeFlashMessage(message);
+                }
+            }, 5000);
+        });
+    });
+
+    // Function to add flash message dynamically (for AJAX requests)
+    function addFlashMessage(type, message) {
+        const container = document.getElementById('flashContainer');
+        const icons = {
+            'success': '✅',
+            'error': '❌',
+            'warning': '⚠️',
+            'info': 'ℹ️'
+        };
+
+        const flashDiv = document.createElement('div');
+        flashDiv.className = `flash-message flash-${type}`;
+        flashDiv.setAttribute('data-flash-type', type);
+
+        flashDiv.innerHTML = `
+                <div class="flash-icon">${icons[type] || '💬'}</div>
+                <div class="flash-content">${message}</div>
+                <button type="button" class="flash-close" onclick="removeFlashMessage(this.parentElement)">&times;</button>
+                <div class="flash-progress"></div>
+            `;
+
+        container.appendChild(flashDiv);
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            if (flashDiv.parentNode && !flashDiv.classList.contains('removing')) {
+                removeFlashMessage(flashDiv);
+            }
+        }, 5000);
+    }
+</script>
 </body>
 </html>

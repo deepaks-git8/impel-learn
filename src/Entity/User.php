@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -19,6 +21,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: 'Email is required.')]
+    #[Assert\Length(
+        max: 60,
+        maxMessage: 'Email cannot be longer than {{ limit }} characters.'
+    )]
+    #[Assert\Email(message: 'Please enter a valid email address.')]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -28,6 +36,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: 'Password cannot be longer than {{ limit }} characters.'
+    )]
     private ?string $password = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Enrollment::class, orphanRemoval: true)]

@@ -22,19 +22,17 @@ class CourseViewController extends AbstractController
     public function index(CourseRepository $course): Response
     {
         $courses = $course->findAll();
-
-//        return $this->render('course_view/index.html.twig', [
-//            'controller_name' => 'CourseViewController',
-//            'courses' => $courses
-//        ]);
-
         $courseDtos = array_map(fn(Course $course) => new CourseDtoTwig($course), $courses);
-        return $this->render('course_view/index.html.twig', [
+
+        $response = $this->render('course_view/index.html.twig', [
             'courses' => $courseDtos
         ]);
 
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
 
-
+        return $response;
     }
 
     #[Route('/dashboard', name: 'user_dashboard')]
@@ -48,9 +46,15 @@ class CourseViewController extends AbstractController
 
         $dtoEnrollments = array_map(fn(Enrollment $e) => new EnrollmentViewDto($e), $user->getEnrollments()->toArray());
 
-        return $this->render('course_view/dashboard.html.twig', [
+        $response = $this->render('course_view/dashboard.html.twig', [
             'enrollments' => $dtoEnrollments,
         ]);
+
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
 
     #[Route('/course/content/{id}', name: 'app_course_content')]
@@ -61,20 +65,22 @@ class CourseViewController extends AbstractController
         if (!$user) {
             throw $this->createAccessDeniedException();
         }
-        $course = $courseRepo->Find($id);
-        if(!$course){
-            return new JsonResponse(["404"=>"Invalid Course Id"]);
-        }
 
+        $course = $courseRepo->Find($id);
+        if (!$course) {
+            throw $this->createNotFoundException('Course not found');
+        }
 
         $courseDto = new CourseContentViewDto($course);
 
-        return $this->render('course_view/content.html.twig', [
+        $response = $this->render('course_view/content.html.twig', [
             'course' => $courseDto,
         ]);
+
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+
+        return $response;
     }
-
-
-
-
 }

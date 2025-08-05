@@ -17,14 +17,49 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Course name is required.')]
+//    #[Assert\NotBlank(message: 'Course name is required.')]
+    #[Assert\Regex(
+        pattern: '/[A-Za-z]/',
+        message: 'Course name must contain at least one letter.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[^\d\.]/',
+        message: 'Course name cannot start with a number or a period.'
+    )]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: 'Course name cannot be shorter than {{ limit }} characters.',
+        maxMessage: 'Course name cannot be longer than {{ limit }} characters.'
+    )]
+
+    #[Assert\Regex(
+        pattern: '/^[^\d]/',
+        message: 'Course name cannot start with a number.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9\s\-_,\.;:()]+$/',
+        message: 'Course name contains invalid characters.'
+    )]
     private ?string $name = null;
+
 
     #[ORM\OneToMany(targetEntity: Enrollment::class, mappedBy: 'course', orphanRemoval: true)]
     private Collection $enrollments;
 
     #[ORM\Column(length: 10000)]
     #[Assert\NotBlank(message: 'Description is required.')]
+    #[Assert\Length(
+        min: 50,
+        max: 500,
+        minMessage: 'Description cannot be shorter than {{ limit }} characters.',
+        maxMessage: 'Description cannot be longer than {{ limit }} characters.'
+
+    )]
+    #[Assert\Regex(
+        pattern: '/^[^<>]*$/',
+        message: 'Course description cannot contain HTML tags.'
+    )]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
@@ -32,6 +67,33 @@ class Course
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Instructor is required.')]
+    #[Assert\Length(
+        min: 3,
+        max: 100,
+        minMessage: 'Instructor name must be at least {{ limit }} characters long.',
+        maxMessage: 'Instructor name cannot be longer than {{ limit }} characters.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z\s\-\.]+$/',
+        message: 'Instructor name can only contain letters, spaces, hyphens, and periods.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[^\d]/',
+        message: 'Instructor name cannot start with a number.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[^\d-]/',
+        message: 'Instructor name cannot start with a number or a hyphen.'
+    )]
+
+    #[Assert\Regex(
+        pattern: '/[A-Za-z]/',
+        message: 'Instructor name must contain at least one letter.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[^\d\.]/',
+        message: 'Instructor name cannot start with a number or a period.'
+    )]
     private ?string $instructor = null;
 
     #[ORM\Column(length: 255)]
