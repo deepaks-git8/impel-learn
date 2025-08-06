@@ -274,10 +274,14 @@
     <div class="nav-left">
         <a href="{{ path('user_dashboard') }}" class="brand">ImpelLearn</a>
         {% if app.user %}
+            {% set route = app.request.attributes.get('_route') %}
             <a href="{{ path('user_dashboard') }}"
-               class="{{ app.request.attributes.get('_route') starts with 'user_dashboard' ? 'active' : '' }}">📚 Dashboard</a>
+               class="{{ route in ['user_dashboard', 'app_course_content'] ? 'active' : '' }}">📚 Dashboard</a>
+
+            {% set route = app.request.attributes.get('_route') %}
             <a href="{{ path('app_course_view') }}"
-               class="{{ app.request.attributes.get('_route') starts with 'app_course_view' ? 'active' : '' }}">🎒 Courses</a>
+               class="{{ route in ['app_course_view', 'app_add_course', 'app_edit_course'] ? 'active' : '' }}">🎒 Courses</a>
+
         {% endif %}
     </div>
     <div class="nav-right">

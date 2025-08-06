@@ -17,7 +17,7 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-//    #[Assert\NotBlank(message: 'Course name is required.')]
+    #[Assert\NotBlank(message: 'Course name is required.')]
     #[Assert\Regex(
         pattern: '/[A-Za-z]/',
         message: 'Course name must contain at least one letter.'
