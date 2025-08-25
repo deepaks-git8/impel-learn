@@ -113,7 +113,7 @@ class AdminController extends AbstractController
         $em->persist($course);
         $em->flush();
 
-        $this->addFlash('success', 'Course deleted successfully! Edit by ankit');
+        $this->addFlash('success', 'Course deleted successfully! Edit by ankit edited again');
         return $this->redirectToRoute('app_course_view');
     }
 }
