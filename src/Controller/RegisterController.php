@@ -12,6 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Form\FormError;
 
 class RegisterController extends AbstractController
 {
@@ -31,28 +32,29 @@ class RegisterController extends AbstractController
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted()) {
             $email = $form->get('email')->getData();
 
             // Check if user already exists
             $existingUser = $userRepository->findOneBy(['email' => $email]);
             if ($existingUser) {
-                $this->addFlash('error', 'Email already exists.');
-                return $this->redirectToRoute('app_register');
+                $form->get('email')->addError(new FormError('This email address is already registered.'));
             }
 
-            $hashedPassword = $passwordHasher->hashPassword(
-                $user,
-                $form->get('plainPassword')->getData()
-            );
-            $user->setPassword($hashedPassword);
-            $user->setRoles(['ROLE_USER']);
+            if ($form->isValid()) {
+                $hashedPassword = $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData()
+                );
+                $user->setPassword($hashedPassword);
+                $user->setRoles(['ROLE_USER']);
 
-            $entityManager->persist($user);
-            $entityManager->flush();
+                $entityManager->persist($user);
+                $entityManager->flush();
 
-            $this->addFlash('success', 'Registration successful!');
-            return $this->redirectToRoute('app_login');
+                $this->addFlash('success', 'Registration successful!');
+                return $this->redirectToRoute('app_login');
+            }
         }
 
         return $this->render('register/index.html.twig', [

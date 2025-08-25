@@ -116,8 +116,8 @@ class ApiControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertArrayHasKey('requested_at', $responseData);
-        $this->assertArrayHasKey('data', $responseData);
-        $this->assertIsArray($responseData['data']);
+        $this->assertArrayHasKey('Data', $responseData);
+        $this->assertIsArray($responseData['Data']);
     }
 
     public function testGetUsersWithZeroCourseId(): void
@@ -126,8 +126,8 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('data', $responseData);
-        $this->assertEmpty($responseData['data']);
+        $this->assertArrayHasKey('Data', $responseData);
+        $this->assertEmpty($responseData['Data']);
     }
 
     public function testGetUsersWithNegativeCourseId(): void
@@ -143,8 +143,8 @@ class ApiControllerTest extends WebTestCase
 
         $this->assertResponseIsSuccessful();
         $responseData = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($responseData['data']);
-        $this->assertEmpty($responseData['data']);
+        $this->assertIsArray($responseData['Data']);
+        $this->assertEmpty($responseData['Data']);
     }
 
     public function testGetUsersWithStringCourseId(): void

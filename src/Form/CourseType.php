@@ -13,10 +13,10 @@ class CourseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('Name')
-            ->add('Description')
-            ->add('Instructor')
-            ->add('Duration', ChoiceType::class, [
+            ->add('name')
+            ->add('description')
+            ->add('instructor')
+            ->add('duration', ChoiceType::class, [
                 'choices' => array_combine(
                     array_map(fn($w) => "$w week" . ($w > 1 ? "s" : ""), range(1, 52)),
                     range(1, 52)
