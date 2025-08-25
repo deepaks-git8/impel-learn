@@ -1,47 +1,128 @@
 <?php
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+namespace App\Tests\Controller;
 
-class ApiControllerTest extends WebTestCase
+use App\Entity\Course;
+use App\Tests\Data\TestCourseData;
+
+class AdminControllerTest extends BaseWebTestCase
 {
-    public function testAuthenticatedCourseView(): void
+    public function testAddCourseSuccessfully(): void
     {
-        $client = static::createClient();
-        $container = static::getContainer();
-        $em = $container->get(EntityManagerInterface::class);
-        $passwordHasher = $container->get(UserPasswordHasherInterface::class);
+        $admin = $this->createAdminUser();
+        $this->client->loginUser($admin);
 
-        // Ensure user exists in the test DB
-        $userRepo = $em->getRepository(User::class);
-        $user = $userRepo->findOneBy(['email' => 'test1@test.com']);
+        $crawler = $this->client->request('GET', '/admin/add');
 
-        if (!$user) {
-            $user = new User();
-            $user->setEmail('test1@test.com');
-            $user->setRoles(['ROLE_ADMIN']);
-            $user->setPassword(
-                $passwordHasher->hashPassword($user, 'adminpass')
-            );
-            $em->persist($user);
-            $em->flush();
-        }
+        $form = $crawler->selectButton('Submit')->form([
+            'course[name]'        => TestCourseData::validCourse()['name'],
+            'course[description]' => TestCourseData::validCourse()['description'],
+            'course[instructor]'  => TestCourseData::validCourse()['instructor'],
+            'course[duration]'    => TestCourseData::validCourse()['duration'],
+        ]);
 
-        // Ensure user was created
-        $this->assertNotNull($user, 'User not found in test DB');
+        $this->client->submit($form);
 
-        // Login and test
-        $client->loginUser($user);
-        $client->request('GET', '/api/view-course');
+        $this->assertResponseRedirects('/view');
+        $this->client->followRedirect();
 
-        $this->assertResponseIsSuccessful();
-        $this->assertResponseFormatSame('json');
+        $this->assertSelectorExists('.flash-success');
+    }
 
-        $content = $client->getResponse()->getContent();
-        $data = json_decode($content, true);
+    public function testEditCourse(): void
+    {
+        $admin = $this->createAdminUser();
+        $this->client->loginUser($admin);
 
-        $this->assertArrayHasKey('data', $data);
+        $course = $this->createCourse(TestCourseData::editableCourseName());
+
+        $crawler = $this->client->request('GET', '/admin/edit/' . $course->getId());
+        $form = $crawler->selectButton('Submit')->form([
+            'course[name]'        => TestCourseData::updatedCourse()['name'],
+            'course[description]' => TestCourseData::updatedCourse()['description'],
+            'course[instructor]'  => TestCourseData::updatedCourse()['instructor'],
+            'course[duration]'    => TestCourseData::updatedCourse()['duration'],
+        ]);
+
+        $this->client->submit($form);
+
+        $this->assertResponseRedirects('/view');
+        $this->client->followRedirect();
+
+        $updatedCourse = $this->entityManager->getRepository(Course::class)->find($course->getId());
+        $this->assertSame(TestCourseData::updatedCourse()['name'], $updatedCourse->getName());
+    }
+
+    public function testDeleteCourseWithoutEnrollments(): void
+    {
+        $admin = $this->createAdminUser();
+        $this->client->loginUser($admin);
+
+        $course = $this->createCourse();
+
+        $this->client->request('GET', '/admin/delete/' . $course->getId());
+
+        $this->assertResponseRedirects('/view');
+        $deletedCourse = $this->entityManager->getRepository(Course::class)->find($course->getId());
+        $this->assertNotNull($deletedCourse->getDeletedAt());
+    }
+
+
+
+
+    public function testNonAdminCannotAccessAddCourse(): void
+    {
+        $user = $this->createTestUser();
+        $this->client->loginUser($user);
+
+        $this->client->request('GET', '/admin/add');
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+
+
+    public function testNonAdminCannotEditCourse(): void
+    {
+        $user = $this->createTestUser();
+        $this->client->loginUser($user);
+
+        $course = $this->createCourse();
+
+        $this->client->request('GET', '/admin/edit/' . $course->getId());
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    //  DELETE COURSE TESTS
+
+    public function testDeleteNonExistentCourse(): void
+    {
+        $admin = $this->createAdminUser();
+        $this->client->loginUser($admin);
+
+        $this->client->request('GET', '/admin/delete/99999');
+
+        $this->assertResponseStatusCodeSame(404);
+    }
+
+    public function testNonAdminCannotDeleteCourse(): void
+    {
+        $user = $this->createTestUser();
+        $this->client->loginUser($user);
+
+        $course = $this->createCourse();
+
+        $this->client->request('GET', '/admin/delete/' . $course->getId());
+
+        $this->assertResponseStatusCodeSame(403);
+    }
+
+    // ACCESS CONTROL
+
+    public function testUnauthenticatedUserRedirectedFromAdminAdd(): void
+    {
+        $this->client->request('GET', '/admin/add');
+        $this->assertResponseRedirects('http://localhost/login');
     }
 }

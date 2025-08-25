@@ -21,26 +21,26 @@
         <div style="display: flex; flex-direction: column; gap: 12px;">
             <div>
                 <label for="course_name" style="margin-bottom: 5px; font-weight: bold;">Course Name</label>
-                {{ form_widget(form.Name, {'attr': {'id': 'course_name', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
-                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.Name) }}</div>
+                {{ form_widget(form.name, {'attr': {'id': 'course_name', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.name) }}</div>
             </div>
 
             <div>
                 <label for="course_description" style="margin-bottom: 5px; font-weight: bold;">Course Description</label>
-                {{ form_widget(form.Description, {'attr': {'id': 'course_description', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
-                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.Description) }}</div>
+                {{ form_widget(form.description, {'attr': {'id': 'course_description', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.description) }}</div>
             </div>
 
             <div>
                 <label for="course_instructor" style="margin-bottom: 5px; font-weight: bold;">Instructor</label>
-                {{ form_widget(form.Instructor, {'attr': {'id': 'course_instructor', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
-                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.Instructor) }}</div>
+                {{ form_widget(form.instructor, {'attr': {'id': 'course_instructor', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.instructor) }}</div>
             </div>
 
             <div>
                 <label for="course_duration" style="margin-bottom: 5px; font-weight: bold;">Duration</label>
-                {{ form_widget(form.Duration, {'attr': {'id': 'course_duration', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
-                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.Duration) }}</div>
+                {{ form_widget(form.duration, {'attr': {'id': 'course_duration', 'style': 'padding: 8px; border: 1px solid #ccc; border-radius: 4px; width: 100%;'}}) }}
+                <div style="color: red; font-size: 0.9rem;">{{ form_errors(form.duration) }}</div>
             </div>
         </div>
         <div style="color: red; font-size: 0.9rem;">

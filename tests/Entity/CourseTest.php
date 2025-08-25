@@ -4,6 +4,7 @@ namespace App\Tests\Entity;
 
 use App\Entity\Course;
 use App\Entity\Enrollment;
+use App\Tests\Data\TestCourseData;
 use PHPUnit\Framework\TestCase;
 
 class CourseTest extends TestCase
@@ -39,35 +40,35 @@ class CourseTest extends TestCase
     public function testSetAndGetName(): void
     {
         $course = new Course();
-        $course->setName('Advanced PHP');
-        $this->assertSame('Advanced PHP', $course->getName());
+        $course->setName(TestCourseData::courseName());
+        $this->assertSame(TestCourseData::courseName(), $course->getName());
     }
 
     public function testSetAndGetDescription(): void
     {
         $course = new Course();
-        $course->setDescription('A detailed PHP course.');
-        $this->assertSame('A detailed PHP course.', $course->getDescription());
+        $course->setDescription(TestCourseData::courseDescription());
+        $this->assertSame(TestCourseData::courseDescription(), $course->getDescription());
     }
 
     public function testSetAndGetInstructor(): void
     {
         $course = new Course();
-        $course->setInstructor('John Doe');
-        $this->assertSame('John Doe', $course->getInstructor());
+        $course->setInstructor(TestCourseData::instructorName());
+        $this->assertSame(TestCourseData::instructorName(), $course->getInstructor());
     }
 
     public function testSetAndGetDuration(): void
     {
         $course = new Course();
-        $course->setDuration('10 weeks');
-        $this->assertSame('10 weeks', $course->getDuration());
+        $course->setDuration(TestCourseData::courseDuration());
+        $this->assertSame(TestCourseData::courseDuration(), $course->getDuration());
     }
 
     public function testSetAndGetDeletedAt(): void
     {
         $course = new Course();
-        $now = new \DateTimeImmutable();
+        $now = TestCourseData::deletedAt();
         $course->setDeletedAt($now);
         $this->assertSame($now, $course->getDeletedAt());
     }
